@@ -1,0 +1,220 @@
+<html>
+
+<head>
+  <title>性感抓图在线爬虫</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.min.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+  <style>
+    body,
+    html {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+
+    }
+
+    #app {
+      width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+
+    }
+
+    .to-input {
+      width: 500px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .input-box {
+      position: relative;
+      font-size: 14px;
+      display: inline-block;
+      width: 100%;
+    }
+
+    input {
+      -webkit-appearance: none;
+      background-color: #FFF;
+      background-image: none;
+      border-radius: 4px;
+      border: 1px solid #DCDFE6;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      color: #606266;
+      display: inline-block;
+      font-size: inherit;
+      height: 40px;
+      line-height: 40px;
+      outline: 0;
+      padding: 0 15px;
+      -webkit-transition: border-color .2s cubic-bezier(.645, .045, .355, 1);
+      transition: border-color .2s cubic-bezier(.645, .045, .355, 1);
+      width: 100%;
+    }
+
+    .img-box {
+      margin-top: 40px;
+      width: 100%;
+      height: auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      align-content: center;
+      align-items: center;
+
+    }
+
+    button {
+      display: inline-block;
+      line-height: 1;
+      white-space: nowrap;
+      cursor: pointer;
+      border: 1px solid #DCDFE6;
+      -webkit-appearance: none;
+      text-align: center;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      outline: 0;
+      margin: 0;
+      -webkit-transition: .1s;
+      transition: .1s;
+      font-weight: 500;
+      padding: 12px 20px;
+      font-size: 14px;
+      border-radius: 4px;
+      color: #FFF;
+      background-color: #409EFF;
+      border-color: #409EFF;
+
+    }
+
+    .img-ct {
+      margin: 10px;
+    }
+
+    #bizhi {
+      width: 350px;
+      height: 219px;
+      vertical-align: middle;
+
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <h1>性感爬虫在线抓图</h1>
+    <div class="to-input">
+
+      <div class="input-box"><input type="text" v-model="name" @keyup.enter="onSubmit"></div>
+      <button style="margin-left: 20px;" @click=onSubmit>搜索</button>
+    </div>
+    <div v-show="igurl.length>0" style="margin-top: 20px;"><button style="margin-left: 20px;"
+        @click="inpage">上一页</button><button style="margin-left: 20px;" @click="onpage">下一页</button>
+    </div>
+    <div class="img-box">
+
+      <div v-for="url in igurl" class="img-ct">
+
+        <img id="bizhi" :src=url alt="" srcset="">
+      </div>
+      <div v-show="loading">
+        <img src="/images/loading.gif" alt="" srcset="">
+      </div>
+      <div v-show="showindeximg">
+        <img src="/images/girl.gif" alt="" srcset="">
+      </div>
+      </divclas>
+
+    </div>
+
+</body>
+
+</html>
+
+<script>
+  new Vue({
+    el: '#app',
+    data() {
+      return {
+        name: '',
+        igurl: [],
+        page: 1,
+        loading: false,
+        showindeximg: true,
+        scrollTop: window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
+      }
+    },
+    mounted() {
+      this.onSubmit()
+    },
+    watch: {
+      page() {
+        console.log(this.page);
+
+        this.onSubmit()
+      }
+    },
+
+
+    methods: {
+      inpage() {
+        if (this.page > 1) {
+          this.page--
+        }
+
+      },
+      onpage() {
+        this.page++
+      },
+
+      onSubmit() {
+        this.igurl = []
+        this.showindeximg = false
+        this.loading = true
+
+        // ajax({
+        //   type: 'get',
+        //   url: "http://localhost:3000/getimage?name=" + this.name + "&page=" + this.page,
+        //   success: function (data) {
+
+        //     this.loading = false
+        //     this.igurl = data.data;
+
+        //     console.log('接口成功获取URL地址', data)
+        //   },
+        //   error: function (err) {
+        //     console.log('接口返回错误', data)
+        //     alert(err)
+        //   }
+        // })
+
+
+        let url = `/getimage?name=${this.name}&page=${this.page}`;
+        axios.get(url, {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+          .then(res => {
+            console.log(res);
+            this.loading = false
+            this.igurl = res.data.data;
+          });
+
+
+
+      }
+    }
+
+
+
+  })
+</script>

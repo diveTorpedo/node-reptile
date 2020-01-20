@@ -1,0 +1,20 @@
+{
+  "name": "express-node",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "set NODE_ENV='development' && set PORT=3000 &&node ./bin/www --open",
+    "dev": "set  NODE_ENV='production' && node ./bin/www --open"
+  },
+  "dependencies": {
+    "axios": "^0.19.1",
+    "cheerio": "^1.0.0-rc.3",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "morgan": "~1.9.1",
+    "mysql": "^2.17.1",
+    "request": "^2.88.0",
+    "zlib": "^1.0.5"
+  }
+}
