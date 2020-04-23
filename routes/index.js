@@ -23,7 +23,7 @@ router.get('/', async (request, res, next) => {
 
 
 
-  function GetImages (imgname) {
+  function GetImages(imgname) {
     return new Promise((resolve, reject) => {
       let selectpath = []
       dbimg.GetImage(imgname).then((data) => {
@@ -31,9 +31,9 @@ router.get('/', async (request, res, next) => {
           data.forEach(e => {
             selectpath.push(e.link)
           });
-          resolve(selectpath);
-        }
 
+        }
+        resolve(selectpath);
       }).catch((err) => {
         console.log(err);
       })
@@ -43,9 +43,10 @@ router.get('/', async (request, res, next) => {
 
 
 
+
       getdata(request.query).then((data) => {
-        console.log(data.title);
-        let link = data.link
+        console.log('这是爬虫返回的数据', data);
+        let link = data.info
         res.json({ data: link })
         console.log('网站查出来的条数', link.length);
         console.log('数据库查出来的条数', selectpath.length);
@@ -60,8 +61,6 @@ router.get('/', async (request, res, next) => {
           let obj = [request.query.name, e]
           inisetlist.push(obj)
         });
-
-
         console.log('准备插入数据库的数据条数', inisetlist.length);
         if (inisetlist.length > 0) {
           dbimg.AddImage(inisetlist).then((data) => {
@@ -69,30 +68,16 @@ router.get('/', async (request, res, next) => {
           }).catch((err) => {
             console.log(err);
           })
-
         }
-
-
       });
-
-
-
     })
-
-
-
-
-
-
-
   }
 })
 //node 爬虫
 //翻译接口
 //http://fanyi.youdao.com/translate?&doctype=json&type=AUTO&i=你好
-function getdata (querydata) {
+function getdata(querydata) {
   console.log(querydata);
-
   let name = `search=${querydata.name}&lang=Chinese`;
   let smallurl = 'search.php?';
   let bigimgurl = 'big.php?';
@@ -101,32 +86,32 @@ function getdata (querydata) {
   let size = '&w=1440&h=900&type=stretch';
   let bigurl = urls;
   console.log(url);
-
   return axios.get(encodeURI(url)).then(function (response) {
     let $ = cheerio.load(response.data);
     let datas = $('.center>.thumb-container-big');
-
     return new Promise((resolve, reject) => {
-
       let len = 1
-
-      let content = {
-        link: [],
-        title: []
+      let imginfo = {
+        info: [],
       }
-      datas.each((index, el) => {
-        let s = $(el).find('a').attr('href').toString();
-        content.title.push($(el).find('a').attr('title').toString())
-        let u = bigurl + s;
+      // https://images3.alphacoders.com/997/thumb-1920-997984.jpg
+      //https://images3.alphacoders.com/997/thumb-350-997984.jpg
 
+      datas.each((index, el) => {
+        let l = $(el).children('.thumb-container').children('.boxgrid').children('a').children('img').attr('data-src')
+        let u = bigurl + $(el).find('a').attr('href').toString();
+        console.log('u-------', l);
 
         axios.get(u).then(res => {
           len++;
           let $ = cheerio.load(res.data);
-          let data = $('.main-content').attr('src');
-          content.link.push(data)
+          let content = {
+            data: $('.main-content').attr('src'),
+            name: $('.main-content').attr('title')
+          }
+          imginfo.info.push(content)
           if (len === datas.length) {
-            resolve(content)
+            resolve(imginfo)
           }
         })
       })

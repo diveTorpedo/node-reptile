@@ -2,7 +2,7 @@
 
 <head>
   <title>性感抓图在线爬虫</title>
-  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.min.js"></script>
+  <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
   <style>
@@ -122,8 +122,7 @@
     <div class="img-box">
 
       <div v-for="url in igurl" class="img-ct">
-
-        <img id="bizhi" :src=url alt="" srcset="">
+        <img id="bizhi" :src=url.data alt="" srcset="">
       </div>
       <div v-show="loading">
         <img src="/images/loading.gif" alt="" srcset="">
@@ -153,16 +152,14 @@
       }
     },
     mounted() {
-      this.onSubmit()
+
     },
     watch: {
       page() {
         console.log(this.page);
-
         this.onSubmit()
       }
     },
-
 
     methods: {
       inpage() {
@@ -204,9 +201,10 @@
             }
           })
           .then(res => {
-            console.log(res);
+
             this.loading = false
             this.igurl = res.data.data;
+            console.log(igurl);
           });
 
 
